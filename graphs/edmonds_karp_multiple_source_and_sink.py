@@ -171,17 +171,17 @@ class PushRelabelExecutor(MaximumFlowAlgorithmExecutor):
 
 
 if __name__ == "__main__":
-    entrances = [0]
-    exits = [3]
-    # graph = [
-    #     [0, 0, 4, 6, 0, 0],
-    #     [0, 0, 5, 2, 0, 0],
-    #     [0, 0, 0, 0, 4, 4],
-    #     [0, 0, 0, 0, 6, 6],
-    #     [0, 0, 0, 0, 0, 0],
-    #     [0, 0, 0, 0, 0, 0],
-    # ]
-    graph = [[0, 7, 0, 0], [0, 0, 6, 0], [0, 0, 0, 8], [9, 0, 0, 0]]
+    entrances = [0,1]
+    exits = [4]
+    graph = [
+        [0, 0, 4, 6, 0, 0],
+        [0, 0, 5, 2, 0, 0],
+        [0, 0, 0, 0, 4, 4],
+        [0, 0, 0, 0, 6, 6],
+        [0, 0, 0, 0, 0, 0],
+        [0, 0, 0, 0, 0, 0],
+    ]
+    #graph = [[0, 7, 0, 0], [0, 0, 6, 0], [0, 0, 0, 8], [9, 0, 0, 0]]
 
     # prepare our network
     flowNetwork = FlowNetwork(graph, entrances, exits)
@@ -191,3 +191,16 @@ if __name__ == "__main__":
     maximumFlow = flowNetwork.findMaximumFlow()
 
     print(f"maximum flow is {maximumFlow}")
+
+def graphToFlow(g):
+    m=[]
+    for v in range(g.n()):
+        m.append([0]*g.n())
+    for v in g.vertices():
+        neighbors = g.neighbors(v)
+        for n in neighbors:
+            m[vertToPoint(v,f)][vertToPoint(n,f)] = (g.cost(v,n))
+    return m
+
+def vertToPoint(x, w):
+    return x[0] + x[1] * w

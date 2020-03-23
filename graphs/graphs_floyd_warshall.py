@@ -34,9 +34,9 @@ def floyd_warshall(graph, v):
 
     dist = [[float("inf") for _ in range(v)] for _ in range(v)]
 
-    for i in range(v):
-        for j in range(v):
-            dist[i][j] = graph[i][j]
+    for i,e in enumerate(graph.vertices()):
+        for j,f in enumerate(graph.vertices()):
+            if f in graph.neighbors(e):dist[i][j] = graph.cost(e,f)
 
             # check vertex k against all other vertices (i, j)
     for k in range(v):
@@ -50,50 +50,156 @@ def floyd_warshall(graph, v):
                     and dist[i][k] + dist[k][j] < dist[i][j]
                 ):
                     dist[i][j] = dist[i][k] + dist[k][j]
+    n = graph.vertices()
+    d={}
 
-    _print_dist(dist, v)
-    return dist, v
+    for i in range(v):
+        d[n[i]] = {}
+        for j in range(v):
+            d[n[i]][n[j]]=dist[i][j]
+    return d, v
+
+class Graph(object):
+
+    def __init__(self, graph_dict={}):
+        self.__graph_dict = graph_dict
+        
+    def vertices(self):
+        return list(self.__graph_dict.keys())
+    def gDict(self):
+        return self.__graph_dict
+    def edges(self):
+        return self.__generate_edges()
+    def n(self):
+        return len(self.__graph_dict)
+    
+    def weight(self, x, y):
+        return min(self.__graph_dict[x][y])
+    
+    def neighbors(self, x):
+        return self.__graph_dict[x].keys()
+    def cost(self, x, y):
+        return self.__graph_dict[x][y]
+
+    def addVertex(self, vertex):
+        if vertex not in self.__graph_dict:
+            self.__graph_dict[vertex] = {}
+    def delVertex(self, vertex):
+        if vertex in self.__graph_dict:
+            self.__graph_dict.pop(vertex, None)
+        for e in self.__graph_dict:
+            if vertex in self.__graph_dict[e]:
+                self.__graph_dict[e].pop(vertex, None)
+            
+
+    def addArc(self, x, y, poids = 1):
+        arc = (str(x), str(y))
+        (vertex1, vertex2) = tuple(arc)
+        self.addVertex(vertex1)
+        self.addVertex(vertex2)
+        if vertex1 in self.__graph_dict:
+            if vertex2 in self.__graph_dict[vertex1]:
+                self.__graph_dict[vertex1][vertex2].append(poids)
+            else:
+                self.__graph_dict[vertex1][vertex2] = [poids]
+        else:
+
+            self.__graph_dict[vertex1][vertex2] = [poids]
+    
+    def delArc(self, x, y):
+        if y in self.__graph_dict[x]:
+            self.__graph_dict[x].pop(y, None)
+
+    def addArrete(self, x, y, poids = 1):
+        self.addArc(x,y , poids)
+        self.addArc(y, x, poids)
+    def delArrete(self, x, y):
+        self.delArc(x,y)
+        self.delArc(y, x)
+
+    def __generate_edges(self):
+        edges = []
+        for vertex in self.__graph_dict:
+            for neighbour in self.__graph_dict[vertex]:
+                if (vertex, neighbour) not in edges:
+                    edges.append((vertex, neighbour))
+        return edges
+
+    def __str__(self):
+        res = "vertices: "
+        for k in self.__graph_dict:
+            res += str(k) + " "
+        res += "\nedges: "
+        for edge in self.__generate_edges():
+            res += str(edge) + " "
+        return res
+
 
 
 if __name__ == "__main__":
-    v = int(input("Enter number of vertices: "))
-    e = int(input("Enter number of edges: "))
 
-    graph = [[float("inf") for i in range(v)] for j in range(v)]
+    G = {
+    "A": {"B":2, "C":5},
+    "B": {"A": 2, "D": 3, "E": 1, "F": 1},
+    "C": {"A": 5, "F": 3},
+    "D": {"B": 3},
+    "E": {"B": 4, "F": 3},
+    "F": {"C": 3, "E": 3},
+    }
 
-    for i in range(v):
-        graph[i][i] = 0.0
+    print("-------G----------")
 
-        # src and dst are indices that must be within the array size graph[e][v]
-        # failure to follow this will result in an error
-    for i in range(e):
-        print("\nEdge ", i + 1)
-        src = int(input("Enter source:"))
-        dst = int(input("Enter destination:"))
-        weight = float(input("Enter weight:"))
-        graph[src][dst] = weight
+    G = Graph(G)
 
-    floyd_warshall(graph, v)
+    r"""
+    Layout of G2:
 
-    # Example Input
-    # Enter number of vertices: 3
-    # Enter number of edges: 2
+    E -- 1 --> B -- 1 --> C -- 1 --> D -- 1 --> F
+    \                                         /\
+    \                                        ||
+        ----------------- 3 --------------------
+    """
+    G2 = {
+        "B": {"C": 1},
+        "C": {"D": 1},
+        "D": {"F": 1},
+        "E": {"B": 1, "F": 3},
+        "F": {},
+    }
+    G2 = Graph(G2)
 
-    # # generated graph from vertex and edge inputs
-    # [[inf, inf, inf], [inf, inf, inf], [inf, inf, inf]]
-    # [[0.0, inf, inf], [inf, 0.0, inf], [inf, inf, 0.0]]
 
-    # specify source, destination and weight for edge #1
-    # Edge  1
-    # Enter source:1
-    # Enter destination:2
-    # Enter weight:2
+    r"""
+    Layout of G3:
 
-    # specify source, destination and weight for edge #2
-    # Edge  2
-    # Enter source:2
-    # Enter destination:1
-    # Enter weight:1
+    E -- 1 --> B -- 1 --> C -- 1 --> D -- 1 --> F
+    \                                         /\
+    \                                        ||
+        -------- 2 ---------> G ------- 1 ------
+    """
+    G3 = {
+        "B": {"C": 1},
+        "C": {"D": 1},
+        "D": {"F": 1},
+        "E": {"B": 1, "G": 2},
+        "F": {},
+        "G": {"F": 1},
+    }
+    G3 = Graph(G3)
+
+
+    shortDistance = floyd_warshall(G, G.n())
+    print(shortDistance)  # E -- 3 --> F -- 3 --> C == 6
+
+    print("--------G2------------")
+    shortDistance = floyd_warshall(G2,G2.n())
+
+    print(shortDistance)  # E -- 3 --> F == 3
+    print("--------G3------------")
+
+    shortDistance = floyd_warshall(G3, G3.n())
+    print(shortDistance)
+
 
     # # Expected Output from the vertice, edge and src, dst, weight inputs!!
     # 0		INF	INF

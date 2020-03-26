@@ -1,5 +1,29 @@
+def graphToFlow(g):
+    m=[]
+    print(m)
+    vertices = g.vertices()
+    for v in range(g.n()):
+        m.append([0]*g.n())
+        #print(m)
+    for i,v in enumerate(vertices):
+        neighbors = g.neighbors(v)
+        for n in neighbors:
+            m[i][vertices.index(n)] = (g.cost(v,n))
+    return m
+
+
 class FlowNetwork:
     def __init__(self, graph, sources, sinks):
+        n = graph.vertices()
+        s2=[]
+        for e in sources:
+            s2.append(n.index(e))
+        sources = s2
+        s2=[]
+        for e in sinks:
+            s2.append(n.index(e))
+        sinks = s2
+        graph = graphToFlow(graph)
         self.sourceIndex = None
         self.sinkIndex = None
         self.graph = graph
@@ -181,6 +205,7 @@ if __name__ == "__main__":
         [0, 0, 0, 0, 0, 0],
         [0, 0, 0, 0, 0, 0],
     ]
+    
     #graph = [[0, 7, 0, 0], [0, 0, 6, 0], [0, 0, 0, 8], [9, 0, 0, 0]]
 
     # prepare our network
@@ -191,16 +216,3 @@ if __name__ == "__main__":
     maximumFlow = flowNetwork.findMaximumFlow()
 
     print(f"maximum flow is {maximumFlow}")
-
-def graphToFlow(g):
-    m=[]
-    for v in range(g.n()):
-        m.append([0]*g.n())
-    for v in g.vertices():
-        neighbors = g.neighbors(v)
-        for n in neighbors:
-            m[vertToPoint(v,f)][vertToPoint(n,f)] = (g.cost(v,n))
-    return m
-
-def vertToPoint(x, w):
-    return x[0] + x[1] * w

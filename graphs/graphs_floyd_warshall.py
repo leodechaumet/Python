@@ -16,7 +16,7 @@ def _print_dist(dist, v):
         print()
 
 
-def floyd_warshall(graph, v):
+def floyd_warshall(graph):
     """
     :param graph: 2D array calculated from weight[edge[i, j]]
     :type graph: List[List[float]]
@@ -31,6 +31,7 @@ def floyd_warshall(graph, v):
     4. The above is repeated for each vertex k in the graph.
     5. Whenever distance[i][j] is given a new minimum value, next vertex[i][j] is updated to the next vertex[i][k].
     """
+    v = g.n()
 
     dist = [[float("inf") for _ in range(v)] for _ in range(v)]
 
@@ -57,7 +58,7 @@ def floyd_warshall(graph, v):
         d[n[i]] = {}
         for j in range(v):
             d[n[i]][n[j]]=dist[i][j]
-    return d, v
+    return d
 
 class Graph(object):
 

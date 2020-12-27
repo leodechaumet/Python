@@ -1,47 +1,28 @@
-# Author: Phyllipe Bezerra (https://github.com/pmba)
+def topologicalSortUtil(graphe,v,visited,stack): 
 
-clothes = {
-    0: "underwear",
-    1: "pants",
-    2: "belt",
-    3: "suit",
-    4: "shoe",
-    5: "socks",
-    6: "shirt",
-    7: "tie",
-    8: "clock",
-}
+    # Mark the current node as visited. 
+    visited[v] = True
 
-graph = [[1, 4], [2, 4], [3], [], [], [4], [2, 7], [3], []]
+    # Recur for all the vertices adjacent to this vertex 
+    for i in graphe.neighbors(v): 
+        if visited[i] == False: 
+            topologicalSortUtil(graphe, i,visited,stack) 
 
-visited = [0 for x in range(len(graph))]
-stack = []
+    # Push current vertex to stack which stores result 
+    stack.insert(0,v) 
 
+    # The function to do Topological Sort. It uses recursive  
+    # topologicalSortUtil() 
+def topologicalSort(graphe): 
+    # Mark all the vertices as not visited 
+    visited = dict(zip(g.vertices(),[False]*graphe.n()))
+    stack =[] 
 
-def print_stack(stack, clothes):
-    order = 1
-    while stack:
-        cur_clothe = stack.pop()
-        print(order, clothes[cur_clothe])
-        order += 1
+    # Call the recursive helper function to store Topological 
+    # Sort starting from all vertices one by one 
+    for v in graphe.vertices(): 
+        if visited[v] == False: 
+            topologicalSortUtil(graphe,v,visited,stack) 
 
-
-def dfs(u, visited, graph):
-    visited[u] = 1
-    for v in graph[u]:
-        if not visited[v]:
-            dfs(v, visited, graph)
-
-    stack.append(u)
-
-
-def top_sort(graph, visited):
-    for v in range(len(graph)):
-        if not visited[v]:
-            dfs(v, visited, graph)
-
-
-if __name__ == "__main__":
-    top_sort(graph, visited)
+    # Print contents of stack 
     print(stack)
-    print_stack(stack, clothes)

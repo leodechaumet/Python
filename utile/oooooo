@@ -1,0 +1,43 @@
+#*******
+#* Read input from STDIN
+#* Use print to output your result to STDOUT.
+#* Use sys.stderr.write() to display debugging information to STDERR
+#* ***/
+import sys
+from functools import lru_cache
+
+
+lines = []
+for line in sys.stdin:
+	lines.append(line.rstrip('\n'))
+
+nb = lines.pop(0).split(" ") [1]
+lines = lines[0]
+sys.stderr.write(str(lines) + "\n\n")
+
+
+@lru_cache(maxsize=None)
+def dp(i,nb):
+    if nb == 0 and i == 0:
+        return []
+    if nb == 0 or i == 0:
+        return ["IMPOSSIBLE"]
+    r=[]
+    
+    for e in range(i):
+        
+        portion = lines[e:i]
+        sys.stderr.write(str(e) + "-" + str(i) + "\n")
+
+        if portion[::-1] == portion:
+            #sys.stderr.write(str(portion) + "\n")
+            r=dp(e,nb-1)
+            if r != ["IMPOSSIBLE"]:
+                return r+[portion[::-1]]
+
+    return ["IMPOSSIBLE"]
+
+res = dp(len(lines), int(nb))
+print(" ".join(res))
+sys.stderr.write(str("-------------") + "\n\n")
+

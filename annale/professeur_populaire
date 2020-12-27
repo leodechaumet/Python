@@ -1,0 +1,54 @@
+#*******
+#* Read input from STDIN
+#* Use print to output your result to STDOUT.
+#* Use sys.stderr.write() to display debugging information to STDERR
+#* ***/
+import sys
+from itertools import *
+def touteComb(l):
+    res = []
+    for i in range(len(l)+1):
+        res += list(itertools.permutations(l, i))
+    return res
+
+def printMaxActivities(start):
+    """
+    >>> start = [1, 3, 0, 5, 8, 5]
+    >>> finish = [2, 4, 6, 7, 9, 9]
+    >>> printMaxActivities(start, finish)
+    The following activities are selected:
+    0,1,3,4,
+    """
+    n = len(start)
+
+    # The first activity is always selected
+    i = 0
+    nb = 1
+
+    # Consider rest of the activities
+    for j in range(n):
+
+        # If this activity has start time greater than
+        # or equal to the finish time of previously
+        # selected activity, then select it
+        if start[j] >= start[i]+60:
+            nb +=1
+            i = j
+    return nb
+
+lines = []
+for line in sys.stdin:
+	lines.append(list(map(int,line.rstrip('\n').split(" "))))
+
+lines.pop(0)
+m = -1
+#print(lines)
+for n in product((-1,0,1), repeat=len(lines)):
+    
+    liste = [l[n[i]] for i,l in enumerate(lines) if n[i] != -1]
+    liste = sorted(liste)
+    x = printMaxActivities(liste)
+    if x > m:
+        m = x
+print(m)
+    

@@ -35,7 +35,7 @@ def bfs(graph, start):
     explored.add(start)
     while queue:
         v = queue.pop(0)  # queue.popleft()
-        for w in graph[v]:
+        for w in graph.neighbors(v):
             if w not in explored:
                 explored.add(w)
                 queue.append(w)

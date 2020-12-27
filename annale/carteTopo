@@ -1,0 +1,52 @@
+#*******
+#* Read input from STDIN
+#* Use print to output your result to STDOUT.
+#* Use sys.stderr.write() to display debugging information to STDERR
+#* ***/
+import sys
+import numpy as np
+import math
+from itertools import *
+
+
+def dist(p1,p2):
+    x1,y1 = p1
+    x2,y2 = p2
+    return math.sqrt((x2-x1)**2 + (y2-y1)**2)
+
+def touche(c1,c2):
+    p1 = c1[:2]
+    r1 = c1[2]
+    p2 = c2[:2]
+    r2 = c2[2]
+    
+    d = dist(p1,p2)
+    if d<=(r2 + r1) and min(r1, r2) + d >= max(r1, r2):
+        return True
+    
+        return True
+    return False
+
+    
+
+lines = []
+n=int(input())
+for line in range(n):
+	lines.append([int(e) for e in input().split()])
+
+for a,b in combinations(lines,2):
+    if touche(a,b):
+        print("KO")
+        exit(0)
+print("OK")
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
